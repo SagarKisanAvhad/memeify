@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Memeify</string>
+    <string name="lets_memeify">Lets Memeify!</string>
+
+    <string name="stage_one">Stage one of Memeification. Tap the picture below to take a photo.</string>
+    <string name="looking_good">Hey that\'s a good picture! Lets move to the next stage.</string>
+    <string name="select_a_picture">Select a picture to Memeify!</string>
+
+    <string name="stage_two">Stage two of Memeification. Enter the text you want to appear on your photo.</string>
+    <string name="top_text_filler">Moar hair?</string>
+    <string name="bottom_text_filler">I don\'t think so!</string>
+    <string name="save_image">Save image</string>
+    <string name="add_meme_message">You need to memeify your picture!</string>
+    <string name="save_image_failed">Could not save image.</string>
+    <string name="save_image_succeeded">Image saved to device</string>
+
+
+    <string name="image_mime_type">image/*</string>
+    <string name="bottom_text">Bottom Text</string>
+    <string name="top_text">Top Text</string>
+  <string name="permissions_please">Permission denied, boo!</string>
+
+</resources>
