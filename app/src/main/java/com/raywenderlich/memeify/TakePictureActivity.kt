@@ -47,8 +47,12 @@ import java.io.File
 class TakePictureActivity : Activity(), View.OnClickListener {
 
   private var selectedPhotoPath: Uri? = null
-
   private var pictureTaken: Boolean = false
+
+  companion object {
+    private const val MIME_TYPE_IMAGE = "image/"
+    private const val TAKE_PHOTO_REQUEST_CODE = 1
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -74,10 +78,9 @@ class TakePictureActivity : Activity(), View.OnClickListener {
 
     val imagePath = File(filesDir, "images")
     val newFile = File(imagePath, "default_image.jpg")
-    if (newFile.exists()) {
-      newFile.delete()
-    } else {
-      newFile.parentFile.mkdirs()
+    when {
+      newFile.exists() -> newFile.delete()
+      else -> newFile.parentFile.mkdirs()
     }
 
     selectedPhotoPath =
@@ -85,16 +88,15 @@ class TakePictureActivity : Activity(), View.OnClickListener {
 
     captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, selectedPhotoPath)
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      captureIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-    } else {
-
-      val clip = ClipData.newUri(contentResolver, "A photo", selectedPhotoPath)
-      captureIntent.clipData = clip
-      captureIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+    when {
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> captureIntent.flags =
+        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+      else -> {
+        val clip = ClipData.newUri(contentResolver, "A photo", selectedPhotoPath)
+        captureIntent.clipData = clip
+        captureIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+      }
     }
-
-
     startActivityForResult(captureIntent, TAKE_PHOTO_REQUEST_CODE)
   }
 
@@ -125,10 +127,5 @@ class TakePictureActivity : Activity(), View.OnClickListener {
     lookingGoodTextView.visibility = View.VISIBLE
     pictureTaken = true
 
-  }
-
-  companion object {
-    private const val MIME_TYPE_IMAGE = "image/"
-    private const val TAKE_PHOTO_REQUEST_CODE = 1
   }
 }

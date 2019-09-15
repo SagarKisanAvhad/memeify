@@ -33,7 +33,11 @@ package com.raywenderlich.memeify
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -43,7 +47,11 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
-import kotlinx.android.synthetic.main.activity_enter_text.*
+import kotlinx.android.synthetic.main.activity_enter_text.bottom_text_edittext
+import kotlinx.android.synthetic.main.activity_enter_text.saveImageButton
+import kotlinx.android.synthetic.main.activity_enter_text.selectedPictureImageview
+import kotlinx.android.synthetic.main.activity_enter_text.top_text_edittext
+import kotlinx.android.synthetic.main.activity_enter_text.writeTextToImageButton
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -187,8 +195,8 @@ class EnterTextActivity : Activity(), View.OnClickListener {
   }
 
   companion object {
-    const private val FILE_SUFFIX_JPG = ".jpg"
-    const private val HELVETICA_FONT = "Helvetica"
-    const private val MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 42
+    private const val FILE_SUFFIX_JPG = ".jpg"
+    private const val HELVETICA_FONT = "Helvetica"
+    private const val MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 42
   }
 }
