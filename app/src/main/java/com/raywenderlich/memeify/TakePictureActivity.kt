@@ -61,6 +61,24 @@ class TakePictureActivity : Activity(), View.OnClickListener {
     pictureImageview.setOnClickListener(this)
     enterTextButton.setOnClickListener(this)
 
+    checkReceivedIntent()
+
+  }
+
+  private fun checkReceivedIntent() {
+
+    val receivedIntent = intent
+    val intentAction = receivedIntent.action
+    val intentType = receivedIntent.type
+
+    if (intentAction == Intent.ACTION_SEND && intentType != null && intentType.startsWith(
+            MIME_TYPE_IMAGE
+        )
+    ) {
+      selectedPhotoPath = receivedIntent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+      setImageViewWithImage()
+    }
+
   }
 
   override fun onClick(v: View) {

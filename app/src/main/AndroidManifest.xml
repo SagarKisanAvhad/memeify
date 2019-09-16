@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.raywenderlich.memeify">
 
-  <uses-feature android:name="android.hardware.camera" />
-
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
   <application
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
@@ -17,8 +13,13 @@
         android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+      <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="@string/image_mime_type" />
       </intent-filter>
     </activity>
 
@@ -38,6 +39,10 @@
           android:resource="@xml/file_paths" />
     </provider>
   </application>
+
+  <uses-feature android:name="android.hardware.camera" />
+
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
 </manifest>
