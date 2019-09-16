@@ -32,6 +32,7 @@ package com.raywenderlich.memeify
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -70,28 +71,43 @@ class EnterTextActivity : Activity(), View.OnClickListener {
     saveImageButton.setOnClickListener(this)
 
     originalImage = true
+
+    pictureUri = intent.getParcelableExtra<Uri>(IMAGE_URI_KEY)
+    val width = intent.getIntExtra(BITMAP_WIDTH, 100)
+    val height = intent.getIntExtra(BITMAP_HEIGHT, 100)
+    pictureUri?.let {
+      val bitmap = BitmapResizer.shrinkBitmap(this, it, width, height)
+      selectedPictureImageview.setImageBitmap(bitmap)
+    }
   }
 
   override fun onClick(v: View) {
     when (v.id) {
-      R.id.writeTextToImageButton -> {}
-      R.id.saveImageButton -> {}
+      R.id.writeTextToImageButton -> createMeme()
+      R.id.saveImageButton -> askForPermissions()
       else -> println("No case satisfied")
     }
   }
 
   private fun askForPermissions() {
-    @PermissionChecker.PermissionResult val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @PermissionChecker.PermissionResult val permissionCheck =
+      ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(this,
+      ActivityCompat.requestPermissions(
+          this,
           arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-          MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE)
+          MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE
+      )
     } else {
       saveImageToGallery(viewBitmap)
     }
   }
 
-  override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+  override fun onRequestPermissionsResult(
+    requestCode: Int,
+    permissions: Array<String>,
+    grantResults: IntArray
+  ) {
     if (requestCode == MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE) {
       // If request is cancelled, the result arrays are empty.
       if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -110,7 +126,9 @@ class EnterTextActivity : Activity(), View.OnClickListener {
 
     if (!originalImage) {
       pictureUri?.let {
-        val bm = BitmapResizer.shrinkBitmap(this, it, selectedPictureImageview.width, selectedPictureImageview.height)
+        val bm = BitmapResizer.shrinkBitmap(
+            this, it, selectedPictureImageview.width, selectedPictureImageview.height
+        )
         selectedPictureImageview.setImageBitmap(bm)
       }
     }
@@ -130,7 +148,11 @@ class EnterTextActivity : Activity(), View.OnClickListener {
     originalImage = false
   }
 
-  private fun addTextToBitmap(viewBitmap: Bitmap, topText: String, bottomText: String) {
+  private fun addTextToBitmap(
+    viewBitmap: Bitmap,
+    topText: String,
+    bottomText: String
+  ) {
     // get dimensions of image
     val bitmapWidth = viewBitmap.width
     val bitmapHeight = viewBitmap.height
@@ -141,8 +163,11 @@ class EnterTextActivity : Activity(), View.OnClickListener {
     // create paint object with font parameters
     val tf = Typeface.create(HELVETICA_FONT, Typeface.BOLD)
 
-    val textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18f,
-        resources.displayMetrics).toInt()
+    val textSize = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP, 18f,
+        resources.displayMetrics
+    )
+        .toInt()
 
     val textPaint = Paint()
     textPaint.textSize = textSize.toFloat()
@@ -175,7 +200,10 @@ class EnterTextActivity : Activity(), View.OnClickListener {
     if (!originalImage) {
       // save bitmap to file
       memeBitmap?.let {
-        val imageFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), it.toString() + FILE_SUFFIX_JPG)
+        val imageFile = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+            it.toString() + FILE_SUFFIX_JPG
+        )
 
         try {
           // create output stream, compress image and write to file, flush and close outputstream
@@ -186,6 +214,11 @@ class EnterTextActivity : Activity(), View.OnClickListener {
         } catch (e: IOException) {
           Toaster.show(this, R.string.save_image_failed)
         }
+
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
+          data = Uri.fromFile(imageFile)
+        }
+        sendBroadcast(mediaScanIntent)
 
         Toaster.show(this, R.string.save_image_succeeded)
       }
